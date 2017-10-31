@@ -16,19 +16,51 @@ add a user `keepup` to the system and give to him the evil `sudo` capabilities.
 
 ### How It work
 
+Install on the device
+```bash
+git clone https://github.com/pnicorelli/keepup.git
+cd keepup
+sudo bash install.sh
+```
+KeepUp will create a user `keepup` with full SUDO access (like the `pi` user)
+
+Then publish a CSV on **HTTP_URL_LEDGER** with format:
+
+```CSV
+TIMESTAMP,REFNAME,REFVERSION,SCRIPT_URL,SHA256,NOTES
+```
+
+where each field is:
+
+  - TIMESTAMP : epoch of the script generation
+  - REFNAME   : a name for reference
+  - REFVERSION: a reference for versioning
+  - HTTP_URL  : where you serve the script
+  - SHA256    : checksum, return value of `sha256sum yourscript.sh`
+  - NOTES     : bla bla bla if needed
+
+Then put in `/etc/keepup.cfg` **HTTP_URL_LEDGER** as value of **REMOTE_LEDGER**
+
+configuration end with something like a cronjob who execute the keep up. You can put on `/etc/crontab`
+
+```
+# /etc/crontab: system-wide crontab
+
+0 * 	* * *	keepup	/usr/local/bin/keepup
+```
+to sync the device every hour.
+
+### Under the hood
+
 It fetch the CSV table (url defined in configuration)
 An internal table on sqlite keep track the status.
 Every new row is executed.
 A row contain
 
   ```
-   - timestamp
-   - app name
-   - app version
-   - url of the script to be downloaded and executed
-   - sha256 of the script file
-   - notes displayed on execution
+
   ```
+
 I'm supposing the `timestamp` is the unique id of the changes so `timestamp` need to be sorted descending (last row is the last update)
 
 Really simple. May be is not the right way (feedback appreciate).

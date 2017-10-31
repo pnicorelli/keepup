@@ -29,7 +29,7 @@ useradd -U -b '/usr/share' keepup
 
 mkdir /usr/share/keepup
 cp * /usr/share/keepup
-cp /usr/share/keepup/empty_database.db /usr/share/keepup/database.db 
+cp /usr/share/keepup/empty_database.db /usr/share/keepup/database.db
 
 chown -R keepup:keepup /usr/share/keepup
 
@@ -43,3 +43,5 @@ chmod 644 /var/log/keepup.log
 
 echo "keepup   ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/keepup
 chmod 400 /etc/sudoers.d/keepup
+
+apt install curl sqlite3

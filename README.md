@@ -24,7 +24,7 @@ this will create a new user `keepup` with full SUDO access (like the `pi` user)
 
 Then publish a CSV on **HTTP_URL_LEDGER** with format:
 
-```CSV
+```
 TIMESTAMP,REFNAME,REFVERSION,SCRIPT_URL,SHA256,NOTES
 ```
 
@@ -53,11 +53,6 @@ to sync the device every hour.
 It fetch the CSV table (url defined in configuration)
 An internal table on sqlite keep track the status.
 Every new row is executed.
-A row contain
-
-  ```
-
-  ```
 
 I'm supposing the `timestamp` is the unique id of the changes so `timestamp` need to be sorted descending (last row is the last update)
 

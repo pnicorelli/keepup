@@ -9,10 +9,7 @@ How can I keep up them?
 
 ### The solution
 
-A CSV table with incremental changes. Each row is a remote script to be executed on the machine.
-
-This program is intended to run inside a cron job. The `install.sh` script install all the files needed,
-add a user `keepup` to the system and give to him the evil `sudo` capabilities.
+A script launched in a cronjob who read a CSV table incremental changes. Each row is a remote script to be executed on the machine. The status is saved in a sqlite3 db.
 
 ### How It work
 
@@ -22,7 +19,8 @@ git clone https://github.com/pnicorelli/keepup.git
 cd keepup
 sudo bash install.sh
 ```
-KeepUp will create a user `keepup` with full SUDO access (like the `pi` user)
+
+this will create a new user `keepup` with full SUDO access (like the `pi` user)
 
 Then publish a CSV on **HTTP_URL_LEDGER** with format:
 

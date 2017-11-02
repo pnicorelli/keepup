@@ -19,6 +19,7 @@ Keep up with what's happening in a ecosistem.
   -h                print this help
   -d                dry run, get updates but do not run them
   -l                list changes (first row is last change)
+  -g URL            only print a new row for the CSV file
 EOF
 }
 
@@ -107,7 +108,26 @@ lastUpdate() {
   fi
 }
 
-while getopts hdl opt; do
+generateRow() {
+    WORKPLACE=$(mktemp -d)
+    trap "rm -rf $WORKPLACE" EXIT
+
+    curl -sL $1 > $WORKPLACE/$$
+    if [ ! -s $WORKPLACE/$$ ]
+    then
+      echo "Script not FOUND"
+      exit 1
+    fi
+    gNOW=$(date +%s)
+    gAPP="ReferenceName"
+    gVER="ReferenceVersion"
+    gSCRIPT=$1
+    gCHECKSUM=$(sha256sum $WORKPLACE/$$ | cut -f 1 -d " ")
+    gNOTES="Notes"
+    echo "$gNOW,\"$gAPP\",\"$gVER\",\"$gSCRIPT\",$gCHECKSUM,\"$gNOTES\""
+}
+
+while getopts hdlg: opt; do
   case $opt in
     h)
       show_help
@@ -118,6 +138,10 @@ while getopts hdl opt; do
       ;;
     l)
       listChanges
+      exit 0
+      ;;
+    g)
+      generateRow $OPTARG
       exit 0
       ;;
   esac

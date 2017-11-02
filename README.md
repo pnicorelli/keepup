@@ -3,13 +3,18 @@
 ### The problem
 
 I'm currently playing with some raspberry. Many of them will be placed somewhere and network connected.
-Those devices have many apps that are in a continous developing. May be I need sometimes to make some change in the system.
+Those devices have many apps that are in a continous developing. Sometimes I need to make some changes in those machines.
 
 How can I keep up them?
 
 ### The solution
 
-A script launched in a cronjob who read a CSV table incremental changes. Each row is a remote script to be executed on the machine. The status is saved in a sqlite3 db.
+A script launched in a cronjob who read a remote CSV table with incremental changes.
+Each row is a pointer to a remote script, the service download and run the script.
+
+The status is saved in a sqlite3 db.
+
+A single machine is consider update from the `keepup` install date.
 
 ### How It work
 
@@ -22,7 +27,7 @@ sudo bash install.sh
 
 this will create a new user `keepup` with full SUDO access (like the `pi` user)
 
-Then publish a CSV on **HTTP_URL_LEDGER** with format:
+Then publish a CSV on **REMOTE_LEDGER** url with format:
 
 ```
 TIMESTAMP,REFNAME,REFVERSION,SCRIPT_URL,SHA256,NOTES
@@ -37,41 +42,24 @@ where each field is:
   - SHA256    : checksum, return value of `sha256sum yourscript.sh`
   - NOTES     : bla bla bla if needed
 
-Then put in `/etc/keepup.cfg` **HTTP_URL_LEDGER** as value of **REMOTE_LEDGER**
+( -g SCRIPT_URL option output the row to be added on **REMOTE_LEDGER** file)
 
-configuration end with something like a cronjob who execute the keep up. You can put on `/etc/crontab`
+Then update **REMOTE_LEDGER** in `/etc/keepup.cfg`
+
+Last but not least, add a cronjob who execute the keepup.
 
 ```
 # /etc/crontab: system-wide crontab
+# example to run keepup every hour
 
 0 * 	* * *	keepup	/usr/local/bin/keepup
 ```
-to sync the device every hour.
 
-### Under the hood
 
-It fetch the CSV table (url defined in configuration)
-An internal table on sqlite keep track the status.
-Every new row is executed.
 
-I'm supposing the `timestamp` is the unique id of the changes so `timestamp` need to be sorted descending (last row is the last update)
+### EXAMPLE
 
-Really simple. May be is not the right way (feedback appreciate).
-
-### DB TABLE
-
-```
-CREATE TABLE changelog (
-      timestamp TIMESTAMP NOT NULL PRIMARY KEY,
-      app VARCHAR(64),
-      version VARCHAR(12),
-      script_url text,
-      checksum VARCHAR(64),
-      notes text
-    );
-```
-
-### CSV EXAMPLE
+- REMOTE_LEDGER.csv
 
 ```
 1509193800,"UX","0.0.1","https://gitlab.com/p.nicorelli/test/raw/master/release.sh",245edcde7db69a17a2f24fa68da93605146ec2666fd2d453c87359df116ba200,"Initial Release"

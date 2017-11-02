@@ -60,7 +60,7 @@ runSync() {
     if [ $ts -gt $LASTUPDATE ]
     then
       echo "[$ts] - $app v$version"
-      DEST=$( echo $app"_"$version | tr -d '"')
+      DEST=$$
       script=$( echo $script | tr -d '"')
       downloadToWorkplace $script $DEST $checksum
       print_log "$(date +%Y%m%d%H%M%S) new script" >> $LOGFILE
@@ -103,7 +103,7 @@ lastUpdate() {
   fi
   if [ ! -n "$LASTUPDATE" ]
   then
-    LASTUPDATE=0
+    LASTUPDATE=$STARTDATE
   fi
 }
 

@@ -34,6 +34,9 @@ cp /usr/share/keepup/empty_database.db /usr/share/keepup/database.db
 chown -R keepup:keepup /usr/share/keepup
 
 ln -s /usr/share/keepup/empty_keepup.cfg /etc/keepup.cfg
+echo "STARTDATE="$(date +%s) >>  /etc/keepup.cfg
+
+
 ln -s /usr/share/keepup/keepup.sh /usr/local/bin/keepup
 chmod 775 ./keepup.sh
 
